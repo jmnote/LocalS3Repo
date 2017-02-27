@@ -85,7 +85,7 @@ class LocalS3File extends File {
 			if(! $this->repo->AWS_S3_PUBLIC) {
 				$path = self::getAuthenticatedURL($this->repo->AWS_S3_BUCKET, $this->repo->getZonePath('public') . $path, 60*60*24*7 /*week*/, false, $this->repo->AWS_S3_SSL);
 			} else {
-				$path = $this->repo->url . $path;
+				$path = $this->repo->getZoneUrl('public') . $path;
 			}
 		}
 		wfDebug( __METHOD__ . " return: $path \n".print_r($this,true)."\n" );
@@ -633,7 +633,7 @@ class LocalS3File extends File {
 
 			$thumb = $this->handler->doTransform( $this, $this->thumbTempPath, $thumbUrl, $params );
 
-			wfDebug( __METHOD__. " thumb: ".print_r($thumb->url,true)."\n" );
+			wfDebug( __METHOD__. " thumb: ".print_r($thumb->getUrl(),true)."\n" );
 			$s3path = $thumbPath;
 
 			$info = $s3->putObjectFile($this->thumbTempPath, $this->repo->AWS_S3_BUCKET, $s3path, 
@@ -993,7 +993,7 @@ class LocalS3File extends File {
 		}
 
 		$dbw = $this->repo->getMasterDB();
-		$dbw->begin();
+		## $dbw->begin();
 
 		if ( !$props ) {
 			$props = $this->repo->getFileProps( $this->getVirtualUrl() );
@@ -1129,7 +1129,7 @@ class LocalS3File extends File {
 
 		# Commit the transaction now, in case something goes wrong later
 		# The most important thing is that files don't get lost, especially archives
-		$dbw->commit();
+		## $dbw->commit();
 
 		# Invalidate cache for all pages using this file
 		$update = new HTMLCacheUpdate( $this->getTitle(), 'imagelinks' );
@@ -1375,7 +1375,7 @@ class LocalS3File extends File {
 	function lock() {
 		$dbw = $this->repo->getMasterDB();
 		if ( !$this->locked ) {
-			$dbw->begin();
+			## $dbw->begin();
 			$this->locked++;
 		}
 		return $dbw->selectField( 'image', '1', array( 'img_name' => $this->getName() ), __METHOD__ );
@@ -1390,7 +1390,7 @@ class LocalS3File extends File {
 			--$this->locked;
 			if ( !$this->locked ) {
 				$dbw = $this->repo->getMasterDB();
-				$dbw->commit();
+				## $dbw->commit();
 			}
 		}
 	}
