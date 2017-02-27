@@ -1,25 +1,32 @@
-/*
-	Modified to work with 1.21 and CloudFront.
-	Owen Borseth - owen at borseth dot us
+## LocalS3Repo - MediaWiki Extension for storing File Uploads/Images on S3
 
-	LocalS3Repo modified to work with MediaWiki 1.21, maybe others, and CloudFront CDN. A maintenance script that I used to move my current
-	files over to S3 has been included; it will probably need to be slightly modified to work for you.
-*/
+LocalS3Repo modified to work with MediaWiki 1.27.1, CloudFront CDN, and rotating IAM keys.
+Modified further to support both IAM keys and static auth (was hardcoded to IAM keys only in some places)
 
-// s3 filesystem repo settings - start
-// Modify below with tyour settings and paste it all into your LocalSettings.php file.
-// Basically, just modify the values that are in all uppercase and all should be fine.
+Based on
+* https://github.com/cariaso/LocalS3Repo
+* https://github.com/oborseth/LocalS3Repo2
+* https://www.mediawiki.org/wiki/Extension:LocalS3Repo
 
-// $wgUploadDirectory is the directory in your bucket where the image directories and images will be stored.
-// If "images" doesn't work for you, change it.
+
+## Settings
+
+Modify the below as required and put them in your LocalSettings.php:
+
+$wgUploadDirectory is the directory in your bucket where the image directories and images will be stored.
+
+If "images" doesn't work for you, change it.
+
+```php
 $wgUploadDirectory = 'images';
 $wgUploadS3Bucket = 'YOUR S3 BUCKET';
 $wgUploadS3SSL = false; // true if SSL should be used
 $wgPublicS3 = true; // true if public, false if authentication should be used
+
 $wgS3BaseUrl = "http".($wgUploadS3SSL?"s":"")."://s3.amazonaws.com/$wgUploadS3Bucket";
-$wgUploadBaseUrl = "$wgS3BaseUrl/$wgUploadDirectory";
-// leave $wgCloudFrontUrl blank to not render images from CloudFront
+$wgUploadBaseUrl = "$wgS3BaseUrl/$wgUploadDirectory"
 $wgCloudFrontUrl = "http".($wgUploadS3SSL?"s":"").'://YOUR_CLOUDFRONT_SUBDOMAIN.cloudfront.net/';
+
 $wgLocalFileRepo = array(
         'class' => 'LocalS3Repo',
         'name' => 's3',
@@ -40,4 +47,4 @@ $wgLocalFileRepo = array(
         'cloudFrontUrl' => $wgCloudFrontUrl,
 );
 require_once("$IP/extensions/LocalS3Repo/LocalS3Repo.php");
-// s3 filesystem repo settings - end
+```
