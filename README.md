@@ -4,7 +4,6 @@ LocalS3Repo modified to work with MediaWiki 1.27.1, CloudFront CDN, and rotating
 Modified further to support both IAM keys and static auth (was hardcoded to IAM keys only in some places)
 
 Based on
-* https://github.com/cariaso/LocalS3Repo
 * https://github.com/oborseth/LocalS3Repo2
 * https://www.mediawiki.org/wiki/Extension:LocalS3Repo
 
